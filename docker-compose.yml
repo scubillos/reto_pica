@@ -3,7 +3,7 @@ version: '3'
 services:
    db:
       container_name: reto.pica.db
-      image: docker.io/mysql:8
+      image: docker.io/mysql:5.7
       environment:
          - MYSQL_ROOT_PASSWORD=root
          - MYSQL_DATABASE=reto_pica
@@ -17,8 +17,6 @@ services:
          dockerfile: Dockerfile
       image: node:19-expressjs
       depends_on:
-         - db
-      links:
          - db
       container_name: reto.pica.app
       ports:
