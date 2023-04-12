@@ -10,4 +10,4 @@ RUN npm install
 EXPOSE 3000
 
 # Ejecutar archivo principal sh de arranque
-CMD [ "node","app.js" ]
+CMD [ "node","./bin/www" ]
