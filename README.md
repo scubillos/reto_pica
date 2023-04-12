@@ -38,3 +38,11 @@ La colección de postman con los servicios GET y POST es el archivo ***reto.post
 En esta colección se encuentran:
 - **GET** Petición para buscar usuario.
 - **POST** Petición para crear usuario.
+
+## Jmeter
+You are going to find a file with name "Test-Plan.jmx" to use it you need to have
+the application jmeter configured in your machine.
+Into the create user thread you can change the defauld values to simulate the user concurrency 
+period and anothers things.
+The request are configureted to generate the random values to create users
+Also we have some validations to make sure the follow designed is running such as we are expected
