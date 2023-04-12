@@ -1,0 +1,107 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-pica
+  labels:
+    app: app-pica
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: app-pica    # indicates which Pods (with which labeles) need be handled by this Deployment
+  template:
+    metadata:         # indicates the metadata that will be added to each Pod
+      labels:
+        app: app-pica
+    spec:
+      containers:     # defines a running container inside the Pod
+        - name: app-pica
+          image: archiplus/node-pica
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 3000   # which port of the container is exposed to the Pod
+          env:
+            - name: DB_NAME
+              value: reto_pica
+            - name: USER_NAME
+              value: root
+            - name: USER_PWD
+              value: root
+            - name: DB_HOST
+              value: 172.17.0.2
+          resources:
+            limits:
+              memory: "256Mi"
+              cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: app-balancer
+spec:
+  ports:
+    - name: 80-tcp
+      port: 80
+      protocol: TCP
+      targetPort: 3000
+  selector:
+    app: app-pica
+  type: LoadBalancer
+status:
+  loadBalancer: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: app-pica
+spec:
+  type: ClusterIP
+  selector:             # indicates into which pods ClusterIP provides access
+    app: app-pica
+  ports:
+    - port: 8080          # port exposed outside ClusterIP
+      targetPort: 3000    # port exposed by Pod
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql
+spec:
+  ports:
+    - port: 3306
+  selector:
+    app: mysql
+  clusterIP: None
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql
+spec:
+  selector:
+    matchLabels:
+      app: mysql
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+        - image: mysql:8
+          name: mysql
+          env:
+            # Use secret in real usage
+            - name: MYSQL_ROOT_PASSWORD
+              value: root
+          ports:
+            - containerPort: 3306
+              name: mysql
+          volumeMounts:
+            - name: mysql-persistent-storage
+              mountPath: /var/lib/mysql
+      volumes:
+        - name: mysql-persistent-storage
+          persistentVolumeClaim:
+            claimName: mysql-pv-claim
