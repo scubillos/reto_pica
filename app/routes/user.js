@@ -1,6 +1,11 @@
 var express = require('express');
 var router = express.Router();
 
+var logger = require('../config/logger');
+
+// Mensaje de log para debug
+logger.debug('Mensaje debug');
+
 const User = require('../models/user');
 
 /* GET users listing. */
@@ -13,12 +18,14 @@ router.get('/:id', function(req, res, next) {
   User.findByPk(userId)
     .then(user => {
       if (user) {
+        logger.info('Usuario encontrado');
         res.statusCode = 200;
         res.send({
           message: 'Usuario encontrado',
           data: user.toJSON()
         });
       } else {
+        logger.error(`No se encontró ningún usuario con ID ${userId}`);
         res.statusCode = 404;
         res.send({
           message: `No se encontró ningún usuario con ID ${userId}`
@@ -26,6 +33,7 @@ router.get('/:id', function(req, res, next) {
       }
     })
     .catch(error => {
+      logger.error(error);
       res.statusCode = error.statusCode;
       res.send({
         message: error.message
@@ -43,6 +51,7 @@ router.post('/', (req, res) => {
     fecha
   })
       .then(user => {
+        logger.info('Usuario creado correctamente');
         res.statusCode = 201;
         res.send({
           message: 'Usuario creado correctamente',
@@ -50,8 +59,7 @@ router.post('/', (req, res) => {
         });
       })
       .catch(err => {
-        console.log(req.body);
-        //console.log(err);
+        logger.error(err);
         res.statusCode = 400;
         res.send({
           message: 'Error al crear el usuario'
