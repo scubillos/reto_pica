@@ -26,9 +26,9 @@ spec:
             - name: USER_NAME
               value: root
             - name: USER_PWD
-              value: root
+              value: password
             - name: DB_HOST
-              value: 172.17.0.2
+              value: mysql
           resources:
             limits:
               memory: "256Mi"
@@ -94,7 +94,11 @@ spec:
           env:
             # Use secret in real usage
             - name: MYSQL_ROOT_PASSWORD
+              value: password
+            - name: MYSQL_ROOT_USER
               value: root
+            - name: MYSQL_DATABASE
+              value: reto_pica
           ports:
             - containerPort: 3306
               name: mysql
