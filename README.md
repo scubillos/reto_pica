@@ -21,9 +21,10 @@
 1. Clonar este repositorio.
 2. Ubicarse en una terminal en el proyecto clonado.
 3. Ejecutar `docker build . -t archiplus/node-pica`
-4. Ejecutar `kubectl apply -f mysql-pv.yml`
-5. Ejecutar `kubectl apply -f reto-pica.yml`
-6. Listo
+4. Solo en K3S `docker save archiplus/node-pica | sudo k3s ctr images import -`
+5. Ejecutar `kubectl apply -f mysql-pv.yml`
+6. Ejecutar `kubectl apply -f reto-pica.yml`
+7. Listo
    
 ## Tecnologías
 - NodeJs
@@ -46,3 +47,5 @@ Into the create user thread you can change the defauld values to simulate the us
 period and anothers things.
 The request are configureted to generate the random values to create users
 Also we have some validations to make sure the follow designed is running such as we are expected
+
+If you deploy the application with K3s you have to change into the file "GeneralVariables" the variable endPoint by "http:/localhost" if you deploy with docker the solution you won't have problems with the defaul end Point value because is configurated "http:/localhost:3000"
